@@ -106,3 +106,10 @@ post "/lists" do
     redirect "/lists"
   end
 end
+
+post "/lists/:list_id/todos/:todo_id/delete" do
+  @list = session[:lists].select { |list| list[:id] == params[:list_id] }.first
+  @list[:todos].delete_if { |todo| todo[:id] == params[:todo_id].to_i }
+  session[:success] = "The todo has been deleted."
+  redirect "/lists/#{params[:list_id]}"
+end

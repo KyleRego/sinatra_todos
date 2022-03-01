@@ -1,7 +1,20 @@
+<section id="todos">
+  <header>
+    <h2>Editing: "<%= @list[:name] %>"</h2>
+    <ul>
+      <li>
+        <form action="/lists/<%= @list[:id] %>/delete" method="post">
+          <button type="submit">Delete list</button>
+        </form>
+      </li>
+    </ul>
+  </header>
+</section>
+
 <form action="/lists/<%= @list[:id] %>/edit" method="post">
   <dl>
     <dt>
-      <label for="list_name">Enter the name for your list:</label>
+      <label for="list_name">Enter a new name for the list:</label>
     </dt>
     <dd>
       <input name="list_name" placeholder="List Name" type="text" value="">

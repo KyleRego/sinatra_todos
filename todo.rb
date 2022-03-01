@@ -50,6 +50,13 @@ post "/lists/:id/edit" do
   end
 end
 
+post "/lists/:id/delete" do
+  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  session[:lists].delete(@list)
+  session[:success] = "The list has been deleted."
+  redirect "/lists"
+end
+
 # Return an error message if the name is invalid. Return nil if name is valid.
 def error_for_list_name(name)
   if !(1..100).cover? name.size

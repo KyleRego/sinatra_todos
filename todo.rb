@@ -57,7 +57,31 @@ post "/lists/:id/delete" do
   redirect "/lists"
 end
 
-# Return an error message if the name is invalid. Return nil if name is valid.
+# Return an error message if the todo name is invalid. Return nil if name is valid.
+def error_for_todo(name)
+  if !(1..100).cover? name.size
+    "Todo must be between 1 and 100 characters."
+  end
+end
+
+current_todo_id = 0
+
+post "/lists/:list_id/todos" do
+  @list = session[:lists].select { |list| list[:id] == params[:list_id] }.first
+  text = params[:todo].strip
+  error = error_for_todo(text)
+
+  if error
+    session[:error] = error
+    erb :list, layout: :layout
+  else
+    @list[:todos] << { name: text, completed: false, id: current_todo_id }
+    current_todo_id += 1
+    redirect "/lists/#{params[:list_id]}"
+  end
+end
+
+# Return an error message if the list name is invalid. Return nil if name is valid.
 def error_for_list_name(name)
   if !(1..100).cover? name.size
     "List name must be between 1 and 100 characters."

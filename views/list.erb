@@ -2,7 +2,14 @@
   <header>
     <h2><%= @list[:name] %></h2>
     <ul>
-      <li><a href="/lists/<%= @list[:id] %>/edit">Edit list</a></li>
+      <li>
+        <form action="/lists/<%= @list[:id] %>/complete_all" method="post">
+          <button class="check" type="submit">Complete All</button>
+        </form>
+      </li>
+      <li>
+        <a href="/lists/<%= @list[:id] %>/edit">Edit list</a>
+      </li>
     </ul>
   </header>
 

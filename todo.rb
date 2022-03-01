@@ -107,6 +107,17 @@ post "/lists" do
   end
 end
 
+# Mark all todos of the list as completed
+post "/lists/:id/complete_all" do
+  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  @list[:todos].each do |todo|
+    todo[:completed] = true
+  end
+  session[:success] = "All todos have been completed."
+  redirect "/lists/#{params[:id]}"
+end
+
+# Delete a todo
 post "/lists/:list_id/todos/:todo_id/delete" do
   @list = session[:lists].select { |list| list[:id] == params[:list_id] }.first
   @list[:todos].delete_if { |todo| todo[:id] == params[:todo_id].to_i }

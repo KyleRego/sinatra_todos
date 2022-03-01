@@ -30,6 +30,26 @@ get "/lists/:id" do
   erb :list, layout: :layout
 end
 
+get "/lists/:id/edit" do
+  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  erb :edit_list, layout: :layout
+end
+
+post "/lists/:id/edit" do
+  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  list_name = params[:list_name].strip
+
+  error = error_for_list_name(list_name)
+  if error
+    session[:error] = error
+    erb :edit_list, layout: :layout
+  else
+    @list[:name] = list_name
+    session[:success] = "The list has been renamed."
+    redirect "/lists/#{@list[:id]}"
+  end
+end
+
 # Return an error message if the name is invalid. Return nil if name is valid.
 def error_for_list_name(name)
   if !(1..100).cover? name.size

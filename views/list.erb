@@ -1,6 +1,9 @@
 <section id="todos">
   <header>
     <h2><%= @list[:name] %></h2>
+    <ul>
+      <li><a href="/lists/<%= @list[:id] %>/edit">Edit list</a></li>
+    </ul>
   </header>
 </section>
 <% content_for :header_links do %>

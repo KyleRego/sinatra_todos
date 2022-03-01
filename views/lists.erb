@@ -1,9 +1,13 @@
 <ul id="lists">
   <% @lists.each do |list| %>
-    <li>
+    <% if is_completed(list) && count_todos(list) > 1 %>
+      <li class="complete">
+    <% else %>
+      <li>
+    <% end %>
       <a href="/lists/<%= list[:id] %>">
         <h2><%= list[:name] %></h2>
-        <p><%= list[:todos].size %></p>
+        <p><%= "#{count_completed_todos(list)}/#{count_todos(list)}" %></p>
       </a>
     </li>
   <% end %>

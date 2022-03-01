@@ -3,6 +3,20 @@ require "sinatra/reloader"
 require "sinatra/content_for"
 require "tilt/erubis"
 
+helpers do
+  def is_completed(list)
+    list[:todos].all? { |todo| todo[:completed] }
+  end
+
+  def count_todos(list)
+    list[:todos].size
+  end
+  
+  def count_completed_todos(list)
+    list[:todos].count { |todo| todo[:completed] }
+  end
+end
+
 configure do
   enable :sessions
   set :session_secret, 'secret'

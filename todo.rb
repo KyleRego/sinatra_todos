@@ -23,11 +23,24 @@ helpers do
   def sorted_lists(lists)
     lists.sort_by { |list| is_completed(list) ? 1 : 0 }
   end
+
+  def load_list(list_id)
+    selected_list = session[:lists].select { |list| list[:id] == list_id }.first
+    if selected_list.nil?
+      session[:error] = "That list does not exist"
+      redirect "/lists"
+    end
+    selected_list
+  end
 end
 
 configure do
   enable :sessions
   set :session_secret, 'secret'
+end
+
+configure do
+  set :erb, :escape_html => true
 end
 
 before do
@@ -48,17 +61,22 @@ get "/lists/new" do
 end
 
 get "/lists/:id" do
-  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
-  erb :list, layout: :layout
+  @list = load_list(params[:id])
+  if @list.nil?
+    session[:error] = "That list does not exist."
+    redirect "/lists"
+  else
+    erb :list, layout: :layout
+  end
 end
 
 get "/lists/:id/edit" do
-  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  @list = load_list(params[:id])
   erb :edit_list, layout: :layout
 end
 
 post "/lists/:id/edit" do
-  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  @list = load_list(params[:id])
   list_name = params[:list_name].strip
 
   error = error_for_list_name(list_name)
@@ -73,7 +91,7 @@ post "/lists/:id/edit" do
 end
 
 post "/lists/:id/delete" do
-  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  @list = load_list(params[:id])
   session[:lists].delete(@list)
   session[:success] = "The list has been deleted."
   redirect "/lists"
@@ -89,7 +107,7 @@ end
 current_todo_id = 0
 
 post "/lists/:list_id/todos" do
-  @list = session[:lists].select { |list| list[:id] == params[:list_id] }.first
+  @list = load_list(params[:list_id])
   text = params[:todo].strip
   error = error_for_todo(text)
 
@@ -131,7 +149,7 @@ end
 
 # Mark all todos of the list as completed
 post "/lists/:id/complete_all" do
-  @list = session[:lists].select { |list| list[:id] == params[:id] }.first
+  @list = @list = load_list(params[:id])
   @list[:todos].each do |todo|
     todo[:completed] = true
   end
@@ -141,7 +159,7 @@ end
 
 # Delete a todo
 post "/lists/:list_id/todos/:todo_id/delete" do
-  @list = session[:lists].select { |list| list[:id] == params[:list_id] }.first
+  @list = @list = load_list(params[:list_id])
   @list[:todos].delete_if { |todo| todo[:id] == params[:todo_id].to_i }
   session[:success] = "The todo has been deleted."
   redirect "/lists/#{params[:list_id]}"
@@ -149,7 +167,7 @@ end
 
 # Update the status of a todo
 post "/lists/:list_id/todos/:id" do
-  @list = session[:lists].select { |list| list[:id] == params[:list_id] }.first
+  @list = @list = load_list(params[:list_id])
   @todo = @list[:todos].select { |todo| todo[:id] == params[:id].to_i }.first
   @todo[:completed] = (params[:completed] == "true")
   session[:success] = "The todo has been updated."

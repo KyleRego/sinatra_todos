@@ -15,6 +15,14 @@ helpers do
   def count_completed_todos(list)
     list[:todos].count { |todo| todo[:completed] }
   end
+
+  def sorted_todos(list)
+    list[:todos].sort_by { |todo| todo[:completed] ? 1 : 0 }
+  end
+
+  def sorted_lists(lists)
+    lists.sort_by { |list| is_completed(list) ? 1 : 0 }
+  end
 end
 
 configure do

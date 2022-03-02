@@ -1,5 +1,5 @@
 <ul id="lists">
-  <% @lists.each do |list| %>
+  <% sorted_lists(@lists).each do |list| %>
     <% if is_completed(list) && count_todos(list) > 1 %>
       <li class="complete">
     <% else %>

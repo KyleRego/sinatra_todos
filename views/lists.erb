@@ -1,6 +1,6 @@
 <ul id="lists">
   <% sorted_lists(@lists).each do |list| %>
-    <% if is_completed(list) && count_todos(list) > 1 %>
+    <% if is_completed?(list) %>
       <li class="complete">
     <% else %>
       <li>

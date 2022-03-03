@@ -4,8 +4,8 @@ require "sinatra/content_for"
 require "tilt/erubis"
 
 helpers do
-  def is_completed(list)
-    list[:todos].all? { |todo| todo[:completed] }
+  def is_completed?(list)
+    list[:todos].all? { |todo| todo[:completed] } && list[:todos].size > 0
   end
 
   def count_todos(list)
@@ -21,7 +21,7 @@ helpers do
   end
 
   def sorted_lists(lists)
-    lists.sort_by { |list| is_completed(list) ? 1 : 0 }
+    lists.sort_by { |list| is_completed?(list) ? 1 : 0 }
   end
 end
 

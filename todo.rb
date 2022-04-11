@@ -1,9 +1,8 @@
 require "sinatra"
-require "sinatra/reloader" if development?
 require "sinatra/content_for"
 require "tilt/erubis"
 
-require_relative "session_persistence"
+require_relative "database_persistence"
 
 helpers do
   def is_completed?(list)
@@ -13,7 +12,7 @@ helpers do
   def count_todos(list)
     list[:todos].size
   end
-  
+
   def count_completed_todos(list)
     list[:todos].count { |todo| todo[:completed] }
   end
@@ -39,14 +38,16 @@ end
 configure do
   enable :sessions
   set :session_secret, 'secret'
-end
-
-configure do
   set :erb, :escape_html => true
 end
 
+configure(:development) do
+  require "sinatra/reloader"
+  also_reload "database_persistence.rb"
+end
+
 before do
-  @storage = SessionPersistence.new(session)
+  @storage = DatabasePersistence.new(logger)
 end
 
 get '/' do
